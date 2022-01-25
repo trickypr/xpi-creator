@@ -1,0 +1,25 @@
+{
+  "name": "xpi-creator",
+  "version": "1.0.0",
+  "description": "Generate unsigned xpi files",
+  "main": "xpi-creator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trickypr/xpi-creator.git"
+  },
+  "author": "TrickyPR",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/trickypr/xpi-creator/issues"
+  },
+  "homepage": "https://github.com/trickypr/xpi-creator#readme",
+  "dependencies": {
+    "minimist": "^1.2.5"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.2"
+  }
+}

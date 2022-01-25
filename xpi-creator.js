@@ -1,0 +1,117 @@
+// @ts-check
+const { execSync } = require('child_process')
+const {
+  existsSync,
+  mkdirSync,
+  copyFileSync,
+  writeFileSync,
+  rmSync,
+} = require('fs')
+const { join, dirname } = require('path')
+
+const { walkDirectory } = require('./utils/fs')
+const { generateManifest } = require('./utils/manifest')
+
+// Handle argument parsing
+const argv = require('minimist')(process.argv.slice(2))
+
+const folders = argv._
+
+if (folders.length !== 2) {
+  console.log('Usage: node xpi-creator.js <src> <out>')
+  process.exit(1)
+}
+
+// Grab the first folder, this is where the source is
+const [relIn, relOut] = folders
+const [input, output] = [
+  join(process.cwd(), folders[0]),
+  join(process.cwd(), folders[1]),
+]
+
+console.log(`Converting ${input} to an xpi file called ${output}`)
+
+const tempDir = join('/tmp', relIn)
+
+console.log(`Setting up a temp directory at ${tempDir}`)
+
+// Delete the directory if it exists
+if (existsSync(tempDir)) {
+  console.log(`Deleting ${tempDir}...`)
+  rmSync(tempDir, { recursive: true })
+}
+
+// Create the directory recursively
+mkdirSync(tempDir, { recursive: true })
+
+console.log(`Copying ${input} to ${tempDir}...`)
+const directoryContents = walkDirectory(input)
+
+directoryContents
+  .map((file) => ({ in: file, out: file.replace(input, tempDir) }))
+  .forEach((file) => {
+    const { in: inFile, out: outFile } = file
+    mkdirSync(dirname(outFile), { recursive: true })
+    copyFileSync(inFile, outFile)
+  })
+
+console.log()
+console.log('Building XPI META-INF')
+console.log('=====================')
+console.log()
+
+mkdirSync(join(tempDir, 'META-INF'), { recursive: true })
+
+console.log('cose.manifest...')
+const files = generateManifest(tempDir)
+
+writeFileSync(
+  join(tempDir, 'META-INF', 'cose.manifest'),
+  `Manifest-Version: 1.0\n\n${files}`
+)
+
+console.log('manifest.mf...')
+const mfManifest = generateManifest(tempDir)
+
+writeFileSync(
+  join(tempDir, 'META-INF', 'manifest.mf'),
+  `Manifest-Version: 1.0\n\n${mfManifest}`
+)
+
+console.log('manifest.sf...')
+const sig = [
+  {
+    sha1Digest: execSync(
+      `openssl dgst -sha1 -binary ${join(
+        tempDir,
+        'META-INF',
+        'manifest.mf'
+      )} | openssl enc -base64`
+    )
+      .toString()
+      .trim(),
+    sha256Digest: execSync(
+      `openssl dgst -sha256 -binary ${join(
+        tempDir,
+        'META-INF',
+        'manifest.mf'
+      )} | openssl enc -base64`
+    )
+      .toString()
+      .trim(),
+  },
+]
+  .map(
+    (file) =>
+      `SHA1-Digest: ${file.sha1Digest}\nSHA256-Digest: ${file.sha256Digest}`
+  )
+  .join('\n\n')
+
+writeFileSync(
+  join(tempDir, 'META-INF', 'manifest.sf'),
+  `Signature-Version: 1.0\n${sig}`
+)
+
+console.log('Compressing...')
+execSync(`cd ${tempDir} && zip -9 -r -q ${output} ./*`)
+console.log('Done!')
