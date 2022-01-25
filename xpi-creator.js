@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // @ts-check
 const { execSync } = require('child_process')
 const {
