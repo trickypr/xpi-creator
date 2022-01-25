@@ -19,7 +19,7 @@ const argv = require('minimist')(process.argv.slice(2))
 const folders = argv._
 
 if (folders.length !== 2) {
-  console.log('Usage: node xpi-creator.js <src> <out>')
+  console.log('Usage: xpi-creator <src> <out>')
   process.exit(1)
 }
 
