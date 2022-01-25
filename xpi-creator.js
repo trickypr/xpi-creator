@@ -6,6 +6,7 @@ const {
   copyFileSync,
   writeFileSync,
   rmSync,
+  readFileSync,
 } = require('fs')
 const { join, dirname } = require('path')
 
@@ -23,17 +24,39 @@ if (folders.length !== 2) {
 }
 
 // Grab the first folder, this is where the source is
-const [relIn, relOut] = folders
+const [relIn, _relOut] = folders
 const [input, output] = [
   join(process.cwd(), folders[0]),
   join(process.cwd(), folders[1]),
 ]
 
-console.log(`Converting ${input} to an xpi file called ${output}`)
+console.log(`${input} -> ${output}`)
+console.log()
+console.log('Validating')
+console.log('==========')
+console.log()
+
+const manifestPath = join(input, 'manifest.json')
+const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+
+// Manifest files must include applications.gecko.id
+if (!manifest.applications?.gecko?.id) {
+  console.log(
+    'applications.gecko.id... NOT INCLUDED: will cause .xpi corruption'
+  )
+  process.exit(1)
+} else {
+  console.log('applications.gecko.id... OK')
+}
+
+console.log()
+console.log('Preparing to convert')
+console.log('====================')
+console.log()
 
 const tempDir = join('/tmp', relIn)
 
-console.log(`Setting up a temp directory at ${tempDir}`)
+console.log(`Creating ${tempDir}...`)
 
 // Delete the directory if it exists
 if (existsSync(tempDir)) {
@@ -44,7 +67,7 @@ if (existsSync(tempDir)) {
 // Create the directory recursively
 mkdirSync(tempDir, { recursive: true })
 
-console.log(`Copying ${input} to ${tempDir}...`)
+console.log(`Copying ${input}...`)
 const directoryContents = walkDirectory(input)
 
 directoryContents
