@@ -2,9 +2,9 @@
   "name": "xpi-creator",
   "version": "1.0.1",
   "description": "Generate unsigned xpi files",
-  "bin": "xpi-creator.js",
+  "bin": "cli/xpi-creator.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "repository": {
     "type": "git",
