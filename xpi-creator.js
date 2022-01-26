@@ -55,7 +55,7 @@ console.log('Preparing to convert')
 console.log('====================')
 console.log()
 
-const tempDir = join('/tmp', relIn)
+const tempDir = join(input, 'tmp')
 
 console.log(`Creating ${tempDir}...`)
 
@@ -138,4 +138,7 @@ writeFileSync(
 
 console.log('Compressing...')
 execSync(`cd ${tempDir} && zip -9 -r -q ${output} ./*`)
+console.log('Cleaning up...')
+rmSync(tempDir, { recursive: true })
+
 console.log('Done!')
