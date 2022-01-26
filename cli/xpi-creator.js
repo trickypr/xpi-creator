@@ -11,9 +11,9 @@ const {
 } = require('fs')
 const { join, dirname } = require('path')
 
-const { walkDirectory } = require('./utils/fs')
-const { getIgnoredFiles, isIgnored } = require('./utils/ignore')
-const { generateManifest } = require('./utils/manifest')
+const { walkDirectory } = require('./fs')
+const { getIgnoredFiles, isIgnored } = require('./ignore')
+const { generateManifest } = require('./manifest')
 
 // Handle argument parsing
 const argv = require('minimist')(process.argv.slice(2))
