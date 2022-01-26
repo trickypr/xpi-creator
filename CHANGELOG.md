@@ -1,5 +1,23 @@
 # Changelog
 
+<a name="1.1.0"></a>
+## 1.1.0 (2022-01-26)
+
+### Added
+
+- ✨ Allow for ignoring of folders [[8a110e6](https://github.com/trickypr/xpi-creator/commit/8a110e648739d936efe9725682efccf6a2787041)]
+
+### Changed
+
+- 🔧 Update bin path in package.json [[99a0dfb](https://github.com/trickypr/xpi-creator/commit/99a0dfb4af22b517aac864231ea15268a7e68a4a)]
+- 🚚 Move cli files into cli/ [[ac8f72e](https://github.com/trickypr/xpi-creator/commit/ac8f72eb1ee7f6271329b79db0856dc596c4d61c)]
+- 📌 Require node v14.14.0 or later This is mostly because rmSync requires node v14.14.0 to function. Node 12 will likely be depriciated during mid 2022, so we do not need to support it [[8d1ecb5](https://github.com/trickypr/xpi-creator/commit/8d1ecb55a2bd5c3f2ff11e96d5e5d8ec13dbb75b)]
+
+### Fixed
+
+- 🐛 Win support and same directory bug fix [[e28e5d2](https://github.com/trickypr/xpi-creator/commit/e28e5d2e5b06cd570d6377d858a515b35171db1e)]
+
+
 <a name="1.0.1"></a>
 ## 1.0.1 (2022-01-25)
 
