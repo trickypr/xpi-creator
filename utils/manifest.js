@@ -2,20 +2,22 @@
 
 const { execSync } = require('child_process')
 const { walkDirectory } = require('./fs')
+const { isIgnored } = require('./ignore')
 
 /**
  * Generates a manifest file for a directory
  * @param {string} tempDir The directory to generate a manifest for
+ * @param {string[]} ignoredFiles The list of files to ignore
  * @returns {string} The generated manifest
  */
-function generateManifest(tempDir) {
+function generateManifest(tempDir, ignoredFiles) {
   return walkDirectory(tempDir)
     .map((file) => ({
       real: file,
       // Remove tmp directory and the first slash
       fake: file.replace(tempDir, '').replace('/', ''),
     }))
-    .filter((file) => !file.fake.startsWith('.git'))
+    .filter((file) => !isIgnored(file.fake, ignoredFiles))
     .map((file) => ({
       name: file.fake,
       digestAlgorithm: 'SHA1 SHA256',

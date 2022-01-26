@@ -12,6 +12,7 @@ const {
 const { join, dirname } = require('path')
 
 const { walkDirectory } = require('./utils/fs')
+const { getIgnoredFiles, isIgnored } = require('./utils/ignore')
 const { generateManifest } = require('./utils/manifest')
 
 // Handle argument parsing
@@ -25,7 +26,6 @@ if (folders.length !== 2) {
 }
 
 // Grab the first folder, this is where the source is
-const [relIn, _relOut] = folders
 const [input, output] = [
   join(process.cwd(), folders[0]),
   join(process.cwd(), folders[1]),
@@ -55,6 +55,9 @@ console.log('Preparing to convert')
 console.log('====================')
 console.log()
 
+console.log('Generating ignored files...')
+const toIgnore = getIgnoredFiles(input)
+
 const tempDir = join(input, 'tmp')
 
 console.log(`Creating ${tempDir}...`)
@@ -72,7 +75,12 @@ console.log(`Copying ${input}...`)
 const directoryContents = walkDirectory(input)
 
 directoryContents
-  .map((file) => ({ in: file, out: file.replace(input, tempDir) }))
+  .map((file) => ({
+    in: file,
+    out: file.replace(input, tempDir),
+    rel: file.replace(input, '').replace('/', ''),
+  }))
+  .filter((file) => !isIgnored(file.rel, toIgnore))
   .forEach((file) => {
     const { in: inFile, out: outFile } = file
     mkdirSync(dirname(outFile), { recursive: true })
@@ -87,7 +95,7 @@ console.log()
 mkdirSync(join(tempDir, 'META-INF'), { recursive: true })
 
 console.log('cose.manifest...')
-const files = generateManifest(tempDir)
+const files = generateManifest(tempDir, toIgnore)
 
 writeFileSync(
   join(tempDir, 'META-INF', 'cose.manifest'),
@@ -95,7 +103,7 @@ writeFileSync(
 )
 
 console.log('manifest.mf...')
-const mfManifest = generateManifest(tempDir)
+const mfManifest = generateManifest(tempDir, toIgnore)
 
 writeFileSync(
   join(tempDir, 'META-INF', 'manifest.mf'),
