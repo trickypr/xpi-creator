@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // @ts-check
+
 const { execSync } = require('child_process')
 const {
   existsSync,
@@ -14,6 +15,7 @@ const { join, dirname } = require('path')
 const { walkDirectory } = require('./fs')
 const { getIgnoredFiles, isIgnored } = require('./ignore')
 const { generateManifest } = require('./manifest')
+const { errorMessage, errorCodes, validate } = require('./validator')
 
 // Handle argument parsing
 const argv = require('minimist')(process.argv.slice(2))
@@ -38,16 +40,16 @@ console.log('==========')
 console.log()
 
 const manifestPath = join(input, 'manifest.json')
-const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+const manifest = readFileSync(manifestPath, 'utf8')
 
-// Manifest files must include applications.gecko.id
-if (!manifest.applications?.gecko?.id) {
-  console.log(
-    'applications.gecko.id... NOT INCLUDED: will cause .xpi corruption'
-  )
+const errors = validate(manifest)
+
+if (errors.length > 0) {
+  for (const error of errors) {
+    console.log(`${errorCodes[error]}... ${errorMessage[error]}`)
+  }
+
   process.exit(1)
-} else {
-  console.log('applications.gecko.id... OK')
 }
 
 console.log()
