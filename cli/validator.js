@@ -33,7 +33,7 @@ function validate(input) {
       errors.push(errors['applications.gecko.id'])
     }
 
-    if (manifest.type === 'theme_experiment' && !manifest.theme) {
+    if (manifest.theme_experiment && !manifest.theme) {
       errors.push(errors['theme_experiment.theme.required'])
     }
   } catch (e) {
