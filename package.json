@@ -1,6 +1,6 @@
 {
   "name": "xpi-creator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Generate unsigned xpi files",
   "bin": "cli/xpi-creator.js",
   "main": "api.js",
