@@ -24,23 +24,23 @@ const errorMessage = {
  * @returns {number[]} A list of errors
  */
 function validate(input) {
-  const errors = []
+  const errorTracker = []
 
   try {
     const manifest = JSON.parse(input)
 
     if (!manifest.applications?.gecko?.id) {
-      errors.push(errors['applications.gecko.id'])
+      errorTracker.push(errors['applications.gecko.id'])
     }
 
     if (manifest.theme_experiment && !manifest.theme) {
-      errors.push(errors['theme_experiment.theme.required'])
+      errorTracker.push(errors['theme_experiment.theme.required'])
     }
   } catch (e) {
-    errors.push(errors['manifest.parse'])
+    errorTracker.push(errors['manifest.parse'])
   }
 
-  return errors
+  return errorTracker
 }
 
 module.exports = { validate, errors, errorMessage, errorCodes }
