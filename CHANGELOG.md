@@ -1,5 +1,13 @@
 # Changelog
 
+<a name="1.2.2"></a>
+## 1.2.2 (2022-02-06)
+
+### Fixed
+
+- 🐛 Fix shadowing error [[2ef0c30](https://github.com/trickypr/xpi-creator/commit/2ef0c3024162afcd8a2e3cdc5ca7b399a64b5a8c)]
+
+
 <a name="1.2.1"></a>
 ## 1.2.1 (2022-02-06)
 
